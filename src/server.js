@@ -5,7 +5,13 @@ let bodyParser = require('body-parser');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
 const secrets = require('../src/Secrets.js');
-const url = require('url');
+const cors = require('cors');
+
+const corsOptions = {
+    origin: '*',
+}
+
+app.use(cors(corsOptions))
 
 /**
  * Luodaan yhteys.
@@ -21,13 +27,13 @@ const conn = mysql.createConnection({
 /**
  * Yhdistetaan MySQL:aan.
  */
-conn.connect(function(err) {
+conn.connect(function (err) {
     if (err) throw err;
     console.log("Connected to MySQL!");
 });
 
-let urlencodedParser = bodyParser.urlencoded({ extended: false });
-app.use(bodyParser.urlencoded({ extended: false }));
+let urlencodedParser = bodyParser.urlencoded({extended: false});
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json()); // for reading JSON
 let util = require('util'); // for async calls
 const query = util.promisify(conn.query).bind(conn);
@@ -40,19 +46,19 @@ let server = app.listen(8080, function () {
     console.log("Example app listening at http://%s:%s", host, port)
 })
 
-app.get('/getusercities', function (req, res) {
+app.post('/getusercities', function (req, res) {
     const username = req.body.username;
     console.log("username: ", username);
     const sql1 = "SELECT user_id FROM user WHERE username=?";
-    const sql2 = "SELECT name FROM city WHERE user_id=?";
+    const sql2 = "SELECT * FROM city WHERE user_id=?";
 
-    (async () =>  {
+    (async () => {
         try {
             const result = await query(sql1, [username]);
             const result2 = await query(sql2, [result[0].user_id]);
-            res.send(result2[0]);
+            res.send(result2);
         } catch (e) {
-            console.log("Database error!"+ e);
+            console.log("Database error!" + e);
         }
     })()
 })
@@ -102,7 +108,7 @@ app.post('/searchuser', urlencodedParser, (req, res) => {
                 })
             }
         } catch (e) {
-            console.log("Database error!"+ e);
+            console.log("Database error!" + e);
         }
     })()
 
