@@ -47,3 +47,7 @@
   margin: auto;
   text-align: center;
 }
+
+.savedCities {
+  max-width: 30%;
+}

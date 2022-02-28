@@ -56,8 +56,9 @@ app.post('/getusercities', function (req, res) {
         try {
             const result = await query(sql1, [username]);
             const result2 = await query(sql2, [result[0].user_id]);
-            res.send(result2);
+            res.status(201).send(result2);
         } catch (e) {
+            res.status(401).send("Could not get saved cities. Try again.");
             console.log("Database error!" + e);
         }
     })()
@@ -65,13 +66,20 @@ app.post('/getusercities', function (req, res) {
 
 app.post('/savecity', function (req, res) {
     const city = req.body.city;
-    const userid = req.body.userid;
+    const username = req.body.username;
 
-    const sql = "INSERT INTO city (name, user_id) VALUES (?, ?)";
+    const sql1 = "SELECT user_id FROM user WHERE username=?";
+    const sql2 = "INSERT INTO city (name, user_id) VALUES (?, ?)";
 
     (async () => {
-        await query(sql, [city, userid]);
-        res.send("Saved:" + city + ", " + userid);
+        try {
+            const result = await query(sql1, [username]);
+            await query(sql2, [city, result[0].user_id]);
+            res.status(201).send("City saved successfully: " + city);
+        } catch (e) {
+            res.status(401).send("City save failed. Try again.");
+            console.log("Database error!" + e);
+        }
     })()
 })
 
