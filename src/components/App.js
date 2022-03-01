@@ -11,17 +11,29 @@ function App() {
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=895284fb2d2c50a520ea537456963d9c`
 
+    useEffect(() => {
+        console.log("updated: ", location);
+    }, [location])
+
     const searchLocation = (event, cityname) => {
         if (event.key === 'Enter' || event.button === 0) {
             if (event.button === 0) {
                 console.log(cityname);
-                setLocation(cityname);
-                console.log(location);
+
+                setTimeout(() => {
+                    setLocation(cityname);
+                    axios.get(url).then((response) => {
+                        setData(response.data);
+                        console.log(response.data);
+                    });
+                }, 5000)
+                console.log("Updated location: ", location);
+            } else {
+                axios.get(url).then((response) => {
+                    setData(response.data);
+                    console.log(response.data);
+                });
             }
-            axios.get(url).then((response) => {
-                setData(response.data);
-                console.log(response.data);
-            });
             if (save) {
                 const info = {username: 'Kalle123', city: location};
                 axios
