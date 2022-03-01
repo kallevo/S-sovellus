@@ -11,8 +11,13 @@ function App() {
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=895284fb2d2c50a520ea537456963d9c`
 
-    const searchLocation = (event) => {
+    const searchLocation = (event, cityname) => {
         if (event.key === 'Enter' || event.button === 0) {
+            if (event.button === 0) {
+                console.log(cityname);
+                setLocation(cityname);
+                console.log(location);
+            }
             axios.get(url).then((response) => {
                 setData(response.data);
                 console.log(response.data);
@@ -74,7 +79,6 @@ function App() {
                     {savedCities.map(city => (
                         <tr key={"" + city.save_id}>
                             <td onClick={function (event) {
-                                setLocation(city.name);
                                 searchLocation(event, city.name);
                             }}>{city.name}</td>
                         </tr>
@@ -84,7 +88,6 @@ function App() {
             </div>
             <div className="search">
                 <input
-                    value={location}
                     onChange={event => setLocation(event.target.value)}
                     onKeyPress={searchLocation}
                     placeholder='Write a city here...'
