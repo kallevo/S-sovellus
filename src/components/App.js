@@ -4,36 +4,33 @@ import {useEffect, useState} from "react";
 import React from "react";
 
 function App() {
+
     const [data, setData] = useState({});
     const [location, setLocation] = useState('');
     const [savedCities, setSavedCities] = useState([0]);
     const [save, setSave] = useState(false);
+    const [validator, setValidator] = useState(false);
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=895284fb2d2c50a520ea537456963d9c`
 
     useEffect(() => {
+        if (validator) {
+            axios.get(url).then((response) => {
+                setData(response.data);
+                console.log(response.data);
+            });
+            setValidator(false);
+        }
         console.log("updated: ", location);
-    }, [location])
+    }, [location, validator])
 
-    const searchLocation = (event, cityname) => {
+    const searchLocation = (event) => {
         if (event.key === 'Enter' || event.button === 0) {
-            if (event.button === 0) {
-                console.log(cityname);
 
-                setTimeout(() => {
-                    setLocation(cityname);
-                    axios.get(url).then((response) => {
-                        setData(response.data);
-                        console.log(response.data);
-                    });
-                }, 5000)
-                console.log("Updated location: ", location);
-            } else {
-                axios.get(url).then((response) => {
-                    setData(response.data);
-                    console.log(response.data);
-                });
-            }
+            axios.get(url).then((response) => {
+                setData(response.data);
+                console.log(response.data);
+            });
             if (save) {
                 const info = {username: 'Kalle123', city: location};
                 axios
@@ -90,8 +87,9 @@ function App() {
                     <tbody>
                     {savedCities.map(city => (
                         <tr key={"" + city.save_id}>
-                            <td onClick={function (event) {
-                                searchLocation(event, city.name);
+                            <td onClick={function () {
+                                setLocation(() => city.name)
+                                setValidator(() => true);
                             }}>{city.name}</td>
                         </tr>
                     ))}
