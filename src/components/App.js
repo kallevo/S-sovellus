@@ -27,9 +27,14 @@ function App() {
     const searchLocation = (event) => {
         if (event.key === 'Enter' || event.button === 0) {
 
-            axios.get(url).then((response) => {
+            axios.get(url)
+                .then((response) => {
                 setData(response.data);
                 console.log(response.data);
+            }).catch(error => {
+                if (error.response.status === 404) {
+                    alert("Haulla ei löytynt tuloksia!");
+                }
             });
             if (save) {
                 const info = {username: 'Kalle123', city: location};
