@@ -2,13 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './components/App';
-import SavedCities from "./components/SavedCities";
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
-      <SavedCities />
   </React.StrictMode>,
   document.getElementById('root')
 );

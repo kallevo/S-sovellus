@@ -1,33 +1,109 @@
-import '../App.css';
+import '../App.css'
 import axios from 'axios'
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import React from "react";
 
 function App() {
+
     const [data, setData] = useState({});
     const [location, setLocation] = useState('');
+    const [savedCities, setSavedCities] = useState([0]);
+    const [save, setSave] = useState(false);
+    const [validator, setValidator] = useState(false);
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=895284fb2d2c50a520ea537456963d9c`
 
-    const searchLocation = (event) => {
-        if (event.key === 'Enter') {
+    useEffect(() => {
+        if (validator) {
             axios.get(url).then((response) => {
                 setData(response.data);
                 console.log(response.data);
             });
-            setLocation('');
+            setValidator(false);
+        }
+        console.log("updated: ", location);
+    }, [location, validator])
+
+    const searchLocation = (event) => {
+        if (event.key === 'Enter' || event.button === 0) {
+
+            axios.get(url).then((response) => {
+                setData(response.data);
+                console.log(response.data);
+            });
+            if (save) {
+                const info = {username: 'Kalle123', city: location};
+                axios
+                    .post("http://localhost:8080/savecity", info)
+                    .then(response => {
+                        if (response.status === 201) {
+                            console.log(response.data);
+                        }
+                    }).catch(error => {
+                    if (error.status === 401) {
+                        alert(error.response.data);
+                    }
+                })
+            }
         }
     };
 
+    const handleCheckBoxClick = (event) => {
+        if (event.target.checked) {
+            setSave(true);
+        } else {
+            setSave(false);
+        }
+    }
+
+
+    useEffect(() => {
+        const userinfo = {username: 'Kalle123'};
+        axios
+            .post("http://localhost:8080/getusercities", userinfo)
+            .then(response => {
+                if (response.status === 201) {
+                    console.log(response.data);
+                    setSavedCities(response.data);
+                }
+            }).catch(error => {
+            if (error.response.status === 401) {
+                alert(error.response.data);
+            }
+        })
+        console.log(savedCities);
+    }, [data]);
+
     return (
         <div className="App">
+            <div className="savedCities">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Saved cities</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {savedCities.map(city => (
+                        <tr key={"" + city.save_id}>
+                            <td onClick={function () {
+                                setLocation(() => city.name)
+                                setValidator(() => true);
+                            }}>{city.name}</td>
+                        </tr>
+                    ))}
+                    </tbody>
+                </table>
+            </div>
             <div className="search">
                 <input
-                    value={location}
                     onChange={event => setLocation(event.target.value)}
                     onKeyPress={searchLocation}
                     placeholder='Write a city here...'
                     type="text"/>
+                Save
+                <input
+                    type="checkbox" onClick={handleCheckBoxClick}/>
             </div>
             <div className="container">
                 <div className="top">
