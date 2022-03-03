@@ -25,10 +25,13 @@ h1 {
   position: relative;
   text-align: center;
   padding: 1rem;
+  overflow: hidden;
 }
-.App.search{
+.search{
   text-align: center;
   padding: 1rem;
+  margin: auto;
+  max-width: 30%;
 }
 .App input {
   font-family: Helvetica;
@@ -44,7 +47,7 @@ h1 {
   color: lightgrey;
 }
 .container {
-  max-width: 760px;
+  width: 80%;
   height: 400px;
   margin: auto;
   padding: 1rem;
@@ -75,4 +78,18 @@ h1 {
 }
 .bold {
   font-weight: 600;
+}
+.savedCities {
+  width: 300px;
+  float: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.search-div {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }

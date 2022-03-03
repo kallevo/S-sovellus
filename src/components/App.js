@@ -29,9 +29,9 @@ function App() {
 
             axios.get(url)
                 .then((response) => {
-                setData(response.data);
-                console.log(response.data);
-            }).catch(error => {
+                    setData(response.data);
+                    console.log(response.data);
+                }).catch(error => {
                 if (error.response.status === 404) {
                     alert("Haulla ei löytynt tuloksia!");
                 }
@@ -61,9 +61,9 @@ function App() {
         }
     }
 
-    
+
     function removeCity(save_id) {
-            axios
+        axios
             .post("http://localhost:8080/remove", {save_id})
             .then(response => {
                 if (response.status === 201) {
@@ -119,45 +119,47 @@ function App() {
                     </tbody>
                 </table>
             </div>
-            <div className="search">
-                <input
-                    onChange={event => setLocation(event.target.value)}
-                    onKeyPress={searchLocation}
-                    placeholder='Write a city here...'
-                    type="text"/>
-                Save
-                <input
-                    type="checkbox" onClick={handleCheckBoxClick}/>
-            </div>
-            <div className="container">
-                <div className="top">
-                    <div className="location">
-                        <p>{data.name}</p>
-                    </div>
-                    <div className="temp">
-                        {data.main ? <h1>{data.main.temp.toFixed()}°C</h1> : null}
-                    </div>
-                    <div className="description">
-                        {data.weather ? <p>{data.weather[0].main}</p> : null}
-                    </div>
+            <div className="search-div">
+                <div className="search">
+                    <input
+                        onChange={event => setLocation(event.target.value)}
+                        onKeyPress={searchLocation}
+                        placeholder='Write a city here...'
+                        type="text"/>
+                    Save
+                    <input
+                        type="checkbox" onClick={handleCheckBoxClick}/>
                 </div>
-
-                {data.name !== undefined &&
-                    <div className="bottom">
-                        <div className="feels">
-                            <p>Feels like: </p>
-                            {data.main ? <p className='bold'>{data.main.feels_like.toFixed()}°c</p> : null}
+                <div className="container">
+                    <div className="top">
+                        <div className="location">
+                            <p>{data.name}</p>
                         </div>
-                        <div className="humidity">
-                            <p>Humidity:</p>
-                            {data.main ? <p className='bold'>{data.main.humidity}%</p> : null}
+                        <div className="temp">
+                            {data.main ? <h1>{data.main.temp.toFixed()}°C</h1> : null}
                         </div>
-                        <div className="wind">
-                            <p>Wind speed:</p>{data.wind ?
-                            <p className='bold'>{data.wind.speed.toFixed()} m/s</p> : null}
+                        <div className="description">
+                            {data.weather ? <p>{data.weather[0].main}</p> : null}
                         </div>
                     </div>
-                }
+
+                    {data.name !== undefined &&
+                        <div className="bottom">
+                            <div className="feels">
+                                <p>Feels like: </p>
+                                {data.main ? <p className='bold'>{data.main.feels_like.toFixed()}°c</p> : null}
+                            </div>
+                            <div className="humidity">
+                                <p>Humidity:</p>
+                                {data.main ? <p className='bold'>{data.main.humidity}%</p> : null}
+                            </div>
+                            <div className="wind">
+                                <p>Wind speed:</p>{data.wind ?
+                                <p className='bold'>{data.wind.speed.toFixed()} m/s</p> : null}
+                            </div>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     );
