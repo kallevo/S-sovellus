@@ -118,8 +118,24 @@ app.post('/searchuser', urlencodedParser, (req, res) => {
         } catch (e) {
             console.log("Database error!" + e);
         }
-    })()
-
-
+    })() 
 })
+
+app.post('/remove', function (req, res) {
+    const saveid = req.body.save_id;
+    const sql1 = "DELETE FROM city WHERE save_id=?";
+
+    (async () => {
+        try {
+            console.log("removing saveid:" + saveid)
+            await query(sql1, [saveid]);
+            res.status(201).send("saved city removed");
+        } catch (e) {
+            res.status(401).send("City removal failed. Try again.");
+            console.log("Database error!" + e);
+        }
+    })()
+})
+
+
 
