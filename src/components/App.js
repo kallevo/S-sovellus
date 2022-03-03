@@ -61,6 +61,21 @@ function App() {
         }
     }
 
+    
+    function removeCity(save_id) {
+            axios
+            .post("http://localhost:8080/remove", {save_id})
+            .then(response => {
+                if (response.status === 201) {
+                    console.log(response.data);
+                }
+            }).catch(error => {
+            if (error.response.status === 401) {
+                alert(error.response.data);
+            }
+        })
+    }
+
 
     useEffect(() => {
         const userinfo = {username: 'Kalle123'};
@@ -95,6 +110,9 @@ function App() {
                                 setLocation(() => city.name)
                                 setValidator(() => true);
                             }}>{city.name}</td>
+                            <td>
+                                <button onClick={() => removeCity(city.save_id)}>Remove</button>
+                            </td>
                         </tr>
                     ))}
                     </tbody>
