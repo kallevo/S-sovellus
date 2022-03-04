@@ -112,7 +112,7 @@ function App() {
                                 setValidator(() => true);
                             }}>{city.name}</td>
                             <td>
-                                <button onClick={() => removeCity(city.save_id)}>Remove</button>
+                                <button className="pointer" onClick={() => removeCity(city.save_id)}>Remove</button>
                             </td>
                         </tr>
                     ))}
@@ -128,7 +128,7 @@ function App() {
                         type="text"/>
                     Save
                     <input
-                        type="checkbox" onClick={handleCheckBoxClick}/>
+                        className="pointer" type="checkbox" onClick={handleCheckBoxClick}/>
                 </div>
                 <div className="container">
                     <div className="top">
