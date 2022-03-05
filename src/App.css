@@ -79,7 +79,7 @@ h1 {
   font-weight: 600;
 }
 .savedCities {
-  width: 300px;
+  width: 30%;
   float: left;
   display: flex;
   flex-direction: column;
@@ -91,6 +91,36 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 40%;
+  float: left;
+}
+
+.login {
+  float: right;
+  width: 30%;
+}
+
+.inputgroup > label {
+  margin-top: 15px;
+  display: block;
+}
+
+button {
+  border-radius: 5px;
+  border: none;
+  color: #fff;
+  background-color: #abda8f;
+  cursor: pointer;
+  outline: 0;
+  padding: 5px 0;
+  font-weight: bold;
+  font-size: 16px;
+  width: 140px;
+}
+
+.regBtn {
+  background-color: #c589e0;
+  margin: 10px;
 }
 
 .pointer {

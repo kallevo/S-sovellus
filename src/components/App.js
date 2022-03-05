@@ -33,7 +33,7 @@ function App() {
                     console.log(response.data);
                 }).catch(error => {
                 if (error.response.status === 404) {
-                    alert("Haulla ei löytynt tuloksia!");
+                    alert("Haulla ei löytynyt tuloksia!");
                 }
             });
             if (save) {
@@ -59,6 +59,14 @@ function App() {
         } else {
             setSave(false);
         }
+    }
+
+    const handleLogin = (event) => {
+
+    }
+
+    const handleRegister = (event) => {
+
     }
 
 
@@ -161,6 +169,24 @@ function App() {
                     }
                 </div>
             </div>
+
+            
+            <div className="login">
+                <h3>Login</h3>
+                <form className="loginForm">
+                    <div className="inputgroup">
+                        <label>Username</label>
+                        <input type="text" name="username" placeholder="username"/>
+                    </div>
+                    <div className="inputgroup">
+                        <label>Password</label>
+                        <input type="password" name="password"/>
+                    </div>
+                    <button className="loginBtn" onClick={handleLogin}>Log in</button>
+                    <button className="regBtn" onClick={handleRegister}>Register</button>
+                </form>
+            </div>
+
         </div>
     );
 }
