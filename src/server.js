@@ -137,5 +137,21 @@ app.post('/remove', function (req, res) {
     })()
 })
 
+app.get("/verifytoken", function(req, res) {
+    const authHeader = req.header('authorization');
+    const token = authHeader && authHeader.split(' ')[1]
+    console.log("token: ", token)
+    if (token === null) {
+        return res.sendStatus(401);
+    }
 
-
+    jwt.verify(token, secrets.jwtSecret, (err, user) => {
+        if (err) {
+            return res.status(403).send("Verification of token failed.");
+        } else if (err === null) {
+            return res.status(202).send(req.body);
+        }
+        req.user = user;
+        console.log("user (decoded) " + JSON.stringify(user));
+    })
+})
