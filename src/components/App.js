@@ -1,15 +1,29 @@
 import '../App.css'
 import axios from 'axios'
-import {useEffect, useState} from "react";
+import {useEffect, useReducer, useRef, useState} from "react";
 import React from "react";
+import {Form} from "react-bootstrap";
+
+const formReducer = (state, event) => {
+    return {
+        ...state,
+        [event.name]: event.value
+    }
+}
 
 function App() {
 
+    const [formData, setFormData] = useReducer(formReducer, {})
     const [data, setData] = useState({});
     const [location, setLocation] = useState('');
     const [savedCities, setSavedCities] = useState([0]);
     const [save, setSave] = useState(false);
     const [validator, setValidator] = useState(false);
+    const [formValidated, setFormValidated] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [notLoggedIn, setNotLoggedIn] = useState(false);
+    const formRef = useRef(null);
+    const usernameRef = useRef("");
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=895284fb2d2c50a520ea537456963d9c`
 
@@ -26,7 +40,6 @@ function App() {
 
     const searchLocation = (event) => {
         if (event.key === 'Enter' || event.button === 0) {
-
             axios.get(url)
                 .then((response) => {
                     setData(response.data);
@@ -36,7 +49,7 @@ function App() {
                     alert("Haulla ei löytynyt tuloksia!");
                 }
             });
-            if (save) {
+            if (save && !notLoggedIn) {
                 const info = {username: 'Kalle123', city: location};
                 axios
                     .post("http://localhost:8080/savecity", info)
@@ -62,6 +75,35 @@ function App() {
     }
 
     const handleLogin = (event) => {
+        const form = event.currentTarget;
+        event.preventDefault();
+        if (!form.checkValidity()) {
+            event.stopPropagation();
+            setFormValidated(true);
+        } else {
+            setTimeout(() => {
+                setSubmitting(false);
+                formRef.current.reset();
+                usernameRef.current.focus();
+                setNotLoggedIn(false);
+            }, 3000)
+            setSubmitting(true);
+            axios
+                .post("http://localhost:8080/searchuser", formData)
+                .then(res => {
+                    if (res.status === 202) {
+                        localStorage.setItem('userToken', JSON.stringify(res.data.accessToken));
+                        localStorage.setItem('username', JSON.stringify(res.data.username));
+                    } else if (res.status === 203) {
+                        alert(res.data);
+                    } else if (res.status === 201) {
+                        alert(res.data);
+                    }
+                }).catch(error => {
+                alert("Error logging in. Try again.");
+            })
+            setFormValidated(false);
+        }
 
     }
 
@@ -85,8 +127,29 @@ function App() {
         })
     }
 
+    const handleChange = event => {
+        setFormData({
+            name: event.target.name,
+            value: event.target.value,
+        });
+    }
+
+    const checkIfLoggedIn = () => {
+        console.log("Checked");
+        const token = localStorage.getItem("userToken");
+        if (token === null) {
+            return false;
+        }
+        const tokenObj = JSON.parse(token);
+        console.log("Token: ", tokenObj);
+        return true;
+    }
 
     useEffect(() => {
+        if (!checkIfLoggedIn()) {
+            setNotLoggedIn(true);
+            return;
+        }
         const userinfo = {username: 'Kalle123'};
         axios
             .post("http://localhost:8080/getusercities", userinfo)
@@ -101,7 +164,7 @@ function App() {
             }
         })
         console.log(savedCities);
-    }, [data]);
+    }, [data, notLoggedIn]);
 
     return (
         <div className="App">
@@ -113,7 +176,7 @@ function App() {
                     </tr>
                     </thead>
                     <tbody>
-                    {savedCities.map(city => (
+                    {!notLoggedIn && savedCities.map(city => (
                         <tr key={"" + city.save_id}>
                             <td onClick={function () {
                                 setLocation(() => city.name)
@@ -126,6 +189,7 @@ function App() {
                     ))}
                     </tbody>
                 </table>
+                {notLoggedIn &&<p>Log in to see saved cities</p> }
             </div>
             <div className="search-div">
                 <div className="search">
@@ -134,9 +198,12 @@ function App() {
                         onKeyPress={searchLocation}
                         placeholder='Write a city here...'
                         type="text"/>
-                    Save
-                    <input
-                        className="pointer" type="checkbox" onClick={handleCheckBoxClick}/>
+                    {!notLoggedIn &&
+                        <div>
+                        Save
+                        <input className="pointer" type="checkbox" onClick={handleCheckBoxClick}/>
+                        </div>
+                    }
                 </div>
                 <div className="container">
                     <div className="top">
@@ -170,23 +237,31 @@ function App() {
                 </div>
             </div>
 
-
+            {notLoggedIn &&
             <div className="login">
                 <h3>Login</h3>
-                <form className="loginForm">
-                    <div className="inputgroup">
-                        <label>Username</label>
-                        <input type="text" name="username" placeholder="username"/>
-                    </div>
-                    <div className="inputgroup">
-                        <label>Password</label>
-                        <input type="password" name="password"/>
-                    </div>
-                    <button className="loginBtn" onClick={handleLogin}>Log in</button>
-                    <button className="regBtn" onClick={handleRegister}>Register</button>
-                </form>
-            </div>
-
+                <Form noValidate validated={formValidated} ref={formRef} onSubmit={handleLogin} className="loginForm">
+                    <Form.Group controlId="username" className="inputgroup">
+                        <Form.Label>Username</Form.Label>
+                        <Form.Control required type="text" onChange={handleChange} name="username" placeholder="username" ref={usernameRef}/>
+                        <Form.Control.Feedback type="invalid">
+                            Type your username.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <Form.Group controlId="password" className="inputgroup">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control required type="password" onChange={handleChange} name="password" placeholder="password"/>
+                        <Form.Control.Feedback type="invalid">
+                            Type your password.
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                    <button type={"submit"} className="loginBtn">Log in</button>
+                    {submitting &&
+                        <p>Logging in...</p>
+                    }
+                </Form>
+            </div>}
+            {!notLoggedIn && <button className="loginBtn">Log out</button>}
         </div>
     );
 }
