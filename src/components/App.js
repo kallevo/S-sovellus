@@ -185,7 +185,7 @@ function App() {
 
     return (
         <div className="App">
-            <h1 className="cityheader">Saved cities</h1>
+            <p className="cityheader">Saved cities</p>
             <div className="container">
             <div className="savedCities">
                 <table>
@@ -215,13 +215,13 @@ function App() {
                     <button className="searchButton" onClick={searchLocation}> Search</button>
                     {!notLoggedIn &&
                         <div>
-                        Save 
+                        Save
                         <input className="pointer" type="checkbox" onClick={handleCheckBoxClick}/>
                         </div>
                     }
                 </div>
-                
-                
+
+
                     <div className="top">
                         <div className="location">
                             <p>{data.name}</p>
@@ -251,7 +251,7 @@ function App() {
                         </div>
                     }
                 </div>
-            
+
 
             {notLoggedIn &&
             <div className="login">
@@ -259,14 +259,14 @@ function App() {
                 <Form noValidate validated={formValidated} ref={formRef} onSubmit={handleLogin} className="loginForm">
                     <Form.Group controlId="username" className="inputgroup">
                         <Form.Label>Username</Form.Label>
-                        <Form.Control required type="text" onChange={handleChange} name="username" placeholder="username" ref={usernameRef}/>
+                        <Form.Control required type="text" onChange={handleChange} name="username" placeholder="Username" ref={usernameRef}/>
                         <Form.Control.Feedback type="valid">
                             Type your username.
                         </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group controlId="password" className="inputgroup">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control required type="password" onChange={handleChange} name="password" placeholder="password"/>
+                        <Form.Control required type="password" onChange={handleChange} name="password" placeholder="Password"/>
                         <Form.Control.Feedback type="invalid">
                             Type your password.
                         </Form.Control.Feedback>
@@ -277,9 +277,9 @@ function App() {
                     }
                 </Form>
             </div>}
-            
+
                 {!notLoggedIn && <div className='login'> <button onClick={handleLogout} className="loginBtn">Log out</button> </div>}
-            
+
         </div>
         </div>
     );

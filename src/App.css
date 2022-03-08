@@ -10,6 +10,7 @@ body {
   background-color: #303030;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
 }
 
 p {
@@ -39,6 +40,7 @@ h1 {
   border-radius: 0px;
   padding-left: 0px;
   padding-bottom: 1px;
+  width: 115px;
   border: 1px solid rgba(255,255,255, 0.8);
 }
 ::placeholder {
@@ -87,8 +89,42 @@ h1 {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: #303029;
+  height:400px;
+  max-width:400px;
+  overflow: scroll;
+  overflow-x: hidden;
+  min-width: 200px;
+}
+::-webkit-scrollbar {
+  width: 15px;
+  height: 15px;
+}
 
+::-webkit-scrollbar-track {
+  border: 1px solid transparent;
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #deff91;
+  border-radius: 1px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #deff91;
+}
+.cityheader{
+  display: flex;
+  font-size: 1.6em;
+  text-align: justify;
+  padding-left: 45px;
+}
+.citydefault {
+  text-align: center;
+  padding-bottom: 300px;
+  padding-left: 10px;
+  font-size: 1.1em;
+  color: lightgrey;
 }
 .capitalize {
   text-transform: capitalize;
@@ -103,7 +139,7 @@ h1 {
 
 .login {
   margin-top: 15px;
-  align-items: right;
+  align-items: center;
   float: right;
   width: 20%;
 }
@@ -133,15 +169,11 @@ button {
 
 .searchButton {
   width: 60px;
-  margin-left: 20px;
+  margin-left: 5px;
 }
 
 .pointer {
   cursor: pointer;
   margin-left: 3px;
-}
-.cityheader{
-  float: left;
-  font-size: 1.6em;
 }
 
