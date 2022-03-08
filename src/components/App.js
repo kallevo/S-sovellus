@@ -24,6 +24,7 @@ function App() {
     const [notLoggedIn, setNotLoggedIn] = useState(false);
     const formRef = useRef(null);
     const usernameRef = useRef("");
+    const [username, setUsername] = useState("");
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=895284fb2d2c50a520ea537456963d9c`
 
@@ -50,7 +51,7 @@ function App() {
                 }
             });
             if (save && !notLoggedIn) {
-                const info = {username: 'Kalle123', city: location};
+                const info = {username: JSON.parse(localStorage.getItem("username")), city: location};
                 axios
                     .post("http://localhost:8080/savecity", info)
                     .then(response => {
@@ -94,6 +95,8 @@ function App() {
                     if (res.status === 202) {
                         localStorage.setItem('userToken', JSON.stringify(res.data.accessToken));
                         localStorage.setItem('username', JSON.stringify(res.data.username));
+                        setUsername(res.data.username);
+                        console.log(localStorage.getItem('username'));
                     } else if (res.status === 203) {
                         alert(res.data);
                     } else if (res.status === 201) {
@@ -107,10 +110,10 @@ function App() {
 
     }
 
-    const handleRegister = (event) => {
-
+    const handleLogout = () => {
+        localStorage.clear();
+        setNotLoggedIn(true);
     }
-
 
     function removeCity(save_id) {
         axios
@@ -135,22 +138,36 @@ function App() {
     }
 
     const checkIfLoggedIn = () => {
-        console.log("Checked");
         const token = localStorage.getItem("userToken");
         if (token === null) {
             return false;
         }
         const tokenObj = JSON.parse(token);
         console.log("Token: ", tokenObj);
-        return true;
+        axios
+            .post("http://localhost:8080/verifytoken", {username: JSON.parse(localStorage.getItem("username"))},
+                {headers: {authorization: 'Bearer ' + tokenObj}})
+            .then(res => {
+                if (res.status === 202) {
+                    console.log("Token verification successful.");
+                    return true;
+                }
+            }).catch(error => {
+            if (error.response.status === 401) {
+                console.log("Token null at verifying stage.");
+                return false;
+            } else if (error.response.status === 403) {
+                alert("Session expired. Log in again.");
+                return false;
+        }})
     }
 
     useEffect(() => {
-        if (!checkIfLoggedIn()) {
+        if (checkIfLoggedIn() === false) {
             setNotLoggedIn(true);
             return;
         }
-        const userinfo = {username: 'Kalle123'};
+        const userinfo = {username: JSON.parse(localStorage.getItem("username"))};
         axios
             .post("http://localhost:8080/getusercities", userinfo)
             .then(response => {
@@ -168,17 +185,14 @@ function App() {
 
     return (
         <div className="App">
+            <h1 className="cityheader">Saved cities</h1>
+            <div className="container">
             <div className="savedCities">
                 <table>
-                    <thead>
-                    <tr>
-                        <th>Saved cities</th>
-                    </tr>
-                    </thead>
                     <tbody>
                     {!notLoggedIn && savedCities.map(city => (
-                        <tr key={"" + city.save_id}>
-                            <td onClick={function () {
+                        <tr className="capitalize" key={"" + city.save_id}>
+                            <td className="pointer" onClick={function () {
                                 setLocation(() => city.name)
                                 setValidator(() => true);
                             }}>{city.name}</td>
@@ -189,7 +203,7 @@ function App() {
                     ))}
                     </tbody>
                 </table>
-                {notLoggedIn &&<p>Log in to see saved cities</p> }
+                {notLoggedIn &&<p className="citydefault">Log in to see saved cities</p> }
             </div>
             <div className="search-div">
                 <div className="search">
@@ -198,14 +212,16 @@ function App() {
                         onKeyPress={searchLocation}
                         placeholder='Write a city here...'
                         type="text"/>
+                    <button className="searchButton" onClick={searchLocation}> Search</button>
                     {!notLoggedIn &&
                         <div>
-                        Save
+                        Save 
                         <input className="pointer" type="checkbox" onClick={handleCheckBoxClick}/>
                         </div>
                     }
                 </div>
-                <div className="container">
+                
+                
                     <div className="top">
                         <div className="location">
                             <p>{data.name}</p>
@@ -235,7 +251,7 @@ function App() {
                         </div>
                     }
                 </div>
-            </div>
+            
 
             {notLoggedIn &&
             <div className="login">
@@ -244,7 +260,7 @@ function App() {
                     <Form.Group controlId="username" className="inputgroup">
                         <Form.Label>Username</Form.Label>
                         <Form.Control required type="text" onChange={handleChange} name="username" placeholder="username" ref={usernameRef}/>
-                        <Form.Control.Feedback type="invalid">
+                        <Form.Control.Feedback type="valid">
                             Type your username.
                         </Form.Control.Feedback>
                     </Form.Group>
@@ -261,7 +277,10 @@ function App() {
                     }
                 </Form>
             </div>}
-            {!notLoggedIn && <button className="loginBtn">Log out</button>}
+            
+                {!notLoggedIn && <div className='login'> <button onClick={handleLogout} className="loginBtn">Log out</button> </div>}
+            
+        </div>
         </div>
     );
 }

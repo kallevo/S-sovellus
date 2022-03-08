@@ -97,7 +97,7 @@ app.post('/searchuser', urlencodedParser, (req, res) => {
             if (result.length === 0) { //User not found, creating a new user.
                 sql = "INSERT INTO user (username, password) VALUES (?, ?)";
                 result = await query(sql, [username, hashedpassword]);
-                res.status(201).send("New account created.");
+                res.status(201).send("New account created. You can now log in with your account.");
             } else {
                 sql = "SELECT password FROM user WHERE username = ?";
                 result = await query(sql, [username]);
@@ -137,7 +137,7 @@ app.post('/remove', function (req, res) {
     })()
 })
 
-app.get("/verifytoken", function(req, res) {
+app.post("/verifytoken", function(req, res) {
     const authHeader = req.header('authorization');
     const token = authHeader && authHeader.split(' ')[1]
     console.log("token: ", token)
@@ -151,7 +151,7 @@ app.get("/verifytoken", function(req, res) {
         } else if (err === null) {
             return res.status(202).send(req.body);
         }
-        req.user = user;
+
         console.log("user (decoded) " + JSON.stringify(user));
     })
 })

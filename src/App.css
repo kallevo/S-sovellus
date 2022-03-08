@@ -30,8 +30,7 @@ h1 {
 .search{
   text-align: center;
   padding: 1rem;
-  margin: auto;
-  max-width: 50%;
+  line-height: 200%;
 }
 .App input {
   font-family: Helvetica;
@@ -46,14 +45,13 @@ h1 {
   color: lightgrey;
 }
 .container {
-  width: 80%;
-  height: 400px;
+  width: 100%;
+  min-height: 400px;
   margin: auto;
   padding: 1rem;
   position: relative;
-  top: 5%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
 }
 .App .top {
@@ -85,25 +83,29 @@ h1 {
   font-weight: 600;
 }
 .savedCities {
-  width: 30%;
   float: left;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background: #303029;
+
+}
+.capitalize {
+  text-transform: capitalize;
 }
 
 .search-div {
-  margin: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 40%;
-  float: left;
+  align-items: center;
 }
 
 .login {
+  margin-top: 15px;
+  align-items: right;
   float: right;
-  width: 30%;
+  width: 20%;
 }
 
 .inputgroup > label {
@@ -129,6 +131,17 @@ button {
   margin: 10px;
 }
 
+.searchButton {
+  width: 60px;
+  margin-left: 20px;
+}
+
 .pointer {
   cursor: pointer;
+  margin-left: 3px;
 }
+.cityheader{
+  float: left;
+  font-size: 1.6em;
+}
+
