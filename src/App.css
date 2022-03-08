@@ -177,6 +177,11 @@ button {
   margin-left: 3px;
 }
 
+img {
+  width: 6em;
+  height: 6em;
+}
+
 .formErrorText {
   margin-top: 10px;
   font-size: 20px;
