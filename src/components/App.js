@@ -184,8 +184,8 @@ function App() {
                     </thead>
                     <tbody>
                     {!notLoggedIn && savedCities.map(city => (
-                        <tr key={"" + city.save_id}>
-                            <td onClick={function () {
+                        <tr className="capitalize" key={"" + city.save_id}>
+                            <td className="pointer" onClick={function () {
                                 setLocation(() => city.name)
                                 setValidator(() => true);
                             }}>{city.name}</td>
