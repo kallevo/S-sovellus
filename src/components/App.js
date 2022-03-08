@@ -51,7 +51,7 @@ function App() {
                 }
             });
             if (save && !notLoggedIn) {
-                const info = {username: username, city: location};
+                const info = {username: JSON.parse(localStorage.getItem("username")), city: location};
                 axios
                     .post("http://localhost:8080/savecity", info)
                     .then(response => {
@@ -96,6 +96,7 @@ function App() {
                         localStorage.setItem('userToken', JSON.stringify(res.data.accessToken));
                         localStorage.setItem('username', JSON.stringify(res.data.username));
                         setUsername(res.data.username);
+                        console.log(localStorage.getItem('username'));
                     } else if (res.status === 203) {
                         alert(res.data);
                     } else if (res.status === 201) {
@@ -113,11 +114,6 @@ function App() {
         localStorage.clear();
         setNotLoggedIn(true);
     }
-
-    const handleRegister = (event) => {
-
-    }
-
 
     function removeCity(save_id) {
         axios
@@ -157,7 +153,7 @@ function App() {
             setNotLoggedIn(true);
             return;
         }
-        const userinfo = {username: username};
+        const userinfo = {username: JSON.parse(localStorage.getItem("username"))};
         axios
             .post("http://localhost:8080/getusercities", userinfo)
             .then(response => {
