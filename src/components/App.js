@@ -164,7 +164,6 @@ function App() {
 
     useEffect(() => {
         if (checkIfLoggedIn() === false) {
-            console.log("mlfmsalkfnasnfaslnflasflasasnflaf")
             setNotLoggedIn(true);
             return;
         }
