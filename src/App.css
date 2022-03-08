@@ -182,3 +182,11 @@ img {
   height: 6em;
 }
 
+.formErrorText {
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+.loginBtn {
+  margin-top: 10px;
+}
