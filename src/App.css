@@ -85,11 +85,18 @@ h1 {
   font-weight: 600;
 }
 .savedCities {
-  width: 30%;
   float: left;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background: #303029;
+  border:3px solid green;
+  height:100px;
+  width:150px;
+
+}
+.capitalize {
+  text-transform: capitalize;
 }
 
 .search-div {
