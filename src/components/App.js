@@ -97,7 +97,7 @@ function App() {
                 formRef.current.reset();
                 usernameRef.current.focus();
                 setNotLoggedIn(false);
-            }, 3000)
+            }, 1000)
             setSubmitting(true);
             axios
                 .post("http://localhost:8080/searchuser", formData)
