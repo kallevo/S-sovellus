@@ -137,7 +137,7 @@ app.post('/remove', function (req, res) {
     })()
 })
 
-app.get("/verifytoken", function(req, res) {
+app.post("/verifytoken", function(req, res) {
     const authHeader = req.header('authorization');
     const token = authHeader && authHeader.split(' ')[1]
     console.log("token: ", token)
@@ -151,7 +151,7 @@ app.get("/verifytoken", function(req, res) {
         } else if (err === null) {
             return res.status(202).send(req.body);
         }
-        req.user = user;
+
         console.log("user (decoded) " + JSON.stringify(user));
     })
 })

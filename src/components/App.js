@@ -118,7 +118,6 @@ function App() {
 
     }
 
-
     function removeCity(save_id) {
         axios
             .post("http://localhost:8080/remove", {save_id})
@@ -142,6 +141,7 @@ function App() {
     }
 
     const checkIfLoggedIn = () => {
+        //Tarkistetaan löytyykö local storagesta käyttäjän token.
         console.log("Checked");
         const token = localStorage.getItem("userToken");
         if (token === null) {
@@ -150,6 +150,25 @@ function App() {
         const tokenObj = JSON.parse(token);
         console.log("Token: ", tokenObj);
         return true;
+        /*
+        //Tarkistetaan onko token vanhentunut.
+        axios
+            .post("http://localhost:8080/verifytoken",{user: username}, {headers: {Authorization: 'Bearer: ' + tokenObj}})
+            .then(res => {
+                if (res.status === 202) {
+                    console.log("Token verification successfull.");
+                    return true;
+                } else if (res.status === 403) {
+                    alert("Session expired. Please log in again.")
+                    return false;
+                } else if (res.status === 401) {
+                    console.log("Token was empty in verification process.");
+                    return false;
+                }
+            })
+
+         */
+
     }
 
     useEffect(() => {
