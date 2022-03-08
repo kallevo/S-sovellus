@@ -51,7 +51,7 @@ function App() {
                 }
             });
             if (save && !notLoggedIn) {
-                const info = {username: username, city: location};
+                const info = {username: JSON.parse(localStorage.getItem("username")), city: location};
                 axios
                     .post("http://localhost:8080/savecity", info)
                     .then(response => {
@@ -96,6 +96,7 @@ function App() {
                         localStorage.setItem('userToken', JSON.stringify(res.data.accessToken));
                         localStorage.setItem('username', JSON.stringify(res.data.username));
                         setUsername(res.data.username);
+                        console.log(localStorage.getItem('username'));
                     } else if (res.status === 203) {
                         alert(res.data);
                     } else if (res.status === 201) {
@@ -112,10 +113,6 @@ function App() {
     const handleLogout = () => {
         localStorage.clear();
         setNotLoggedIn(true);
-    }
-
-    const handleRegister = (event) => {
-
     }
 
     function removeCity(save_id) {
@@ -141,7 +138,6 @@ function App() {
     }
 
     const checkIfLoggedIn = () => {
-        //Tarkistetaan löytyykö local storagesta käyttäjän token.
         console.log("Checked");
         const token = localStorage.getItem("userToken");
         if (token === null) {
@@ -150,25 +146,6 @@ function App() {
         const tokenObj = JSON.parse(token);
         console.log("Token: ", tokenObj);
         return true;
-        /*
-        //Tarkistetaan onko token vanhentunut.
-        axios
-            .post("http://localhost:8080/verifytoken",{user: username}, {headers: {Authorization: 'Bearer: ' + tokenObj}})
-            .then(res => {
-                if (res.status === 202) {
-                    console.log("Token verification successfull.");
-                    return true;
-                } else if (res.status === 403) {
-                    alert("Session expired. Please log in again.")
-                    return false;
-                } else if (res.status === 401) {
-                    console.log("Token was empty in verification process.");
-                    return false;
-                }
-            })
-
-         */
-
     }
 
     useEffect(() => {
@@ -176,7 +153,7 @@ function App() {
             setNotLoggedIn(true);
             return;
         }
-        const userinfo = {username: username};
+        const userinfo = {username: JSON.parse(localStorage.getItem("username"))};
         axios
             .post("http://localhost:8080/getusercities", userinfo)
             .then(response => {
