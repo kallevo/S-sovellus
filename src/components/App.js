@@ -174,11 +174,6 @@ function App() {
         <div className="container">
             <div className="savedCities">
                 <table>
-                    <thead>
-                    <tr>
-                        <th>Saved cities</th>
-                    </tr>
-                    </thead>
                     <tbody>
                     {!notLoggedIn && savedCities.map(city => (
                         <tr className="capitalize" key={"" + city.save_id}>
@@ -193,7 +188,7 @@ function App() {
                     ))}
                     </tbody>
                 </table>
-                {notLoggedIn &&<p>Log in to see saved cities</p> }
+                {notLoggedIn &&<p className="citydefault">Log in to see saved cities</p> }
             </div>
             <div className="search-div">
                 <div className="search">
