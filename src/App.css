@@ -132,7 +132,7 @@ button {
 }
 
 .searchButton {
-  width: 140px;
+  width: 60px;
   margin-left: 20px;
 }
 
@@ -141,6 +141,7 @@ button {
   margin-left: 3px;
 }
 .cityheader{
+  float: left;
   font-size: 1.6em;
 }
 
