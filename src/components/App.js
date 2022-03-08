@@ -186,13 +186,9 @@ function App() {
 
     return (
         <div className="App">
+        <div className="container">
             <div className="savedCities">
                 <table>
-                    <thead>
-                    <tr>
-                        <th>Saved cities</th>
-                    </tr>
-                    </thead>
                     <tbody>
                     {!notLoggedIn && savedCities.map(city => (
                         <tr className="capitalize" key={"" + city.save_id}>
@@ -207,7 +203,7 @@ function App() {
                     ))}
                     </tbody>
                 </table>
-                {notLoggedIn &&<p>Log in to see saved cities</p> }
+                {notLoggedIn &&<p className="citydefault">Log in to see saved cities</p> }
             </div>
             <div className="search-div">
                 <div className="search">
@@ -216,14 +212,18 @@ function App() {
                         onKeyPress={searchLocation}
                         placeholder='Write a city here...'
                         type="text"/>
+                        
                     {!notLoggedIn &&
                         <div>
-                        Save
+                        <button className="searchButton" onClick={searchLocation}> Check Weather</button><br/>
+                        Save 
                         <input className="pointer" type="checkbox" onClick={handleCheckBoxClick}/>
+                        
                         </div>
                     }
                 </div>
-                <div className="container">
+                
+                
                     <div className="top">
                         <div className="location">
                             <p>{data.name}</p>
@@ -253,7 +253,7 @@ function App() {
                         </div>
                     }
                 </div>
-            </div>
+            
 
             {notLoggedIn &&
             <div className="login">
@@ -279,7 +279,10 @@ function App() {
                     }
                 </Form>
             </div>}
-            {!notLoggedIn && <button onClick={handleLogout} className="loginBtn">Log out</button>}
+            
+                {!notLoggedIn && <div className='login'> <button onClick={handleLogout} className="loginBtn">Log out</button> </div>}
+            
+        </div>
         </div>
     );
 }
