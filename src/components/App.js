@@ -24,7 +24,7 @@ function App() {
     const [notLoggedIn, setNotLoggedIn] = useState(false);
     const formRef = useRef(null);
     const usernameRef = useRef("");
-    const [username, setUsername] = useState("");
+    const [formErrors, setFormErrors] = useState(false);
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=895284fb2d2c50a520ea537456963d9c`
 
@@ -78,9 +78,10 @@ function App() {
     const handleLogin = (event) => {
         const form = event.currentTarget;
         event.preventDefault();
-        if (!form.checkValidity()) {
+        if (form.checkValidity() === false) {
             event.stopPropagation();
             setFormValidated(true);
+            setFormErrors(true);
         } else {
             setTimeout(() => {
                 setSubmitting(false);
@@ -95,7 +96,6 @@ function App() {
                     if (res.status === 202) {
                         localStorage.setItem('userToken', JSON.stringify(res.data.accessToken));
                         localStorage.setItem('username', JSON.stringify(res.data.username));
-                        setUsername(res.data.username);
                         console.log(localStorage.getItem('username'));
                     } else if (res.status === 203) {
                         alert(res.data);
@@ -106,8 +106,8 @@ function App() {
                 alert("Error logging in. Try again.");
             })
             setFormValidated(false);
+            setFormErrors(false);
         }
-
     }
 
     const handleLogout = () => {
@@ -263,16 +263,13 @@ function App() {
                     <Form.Group controlId="username" className="inputgroup">
                         <Form.Label>Username</Form.Label>
                         <Form.Control required type="text" onChange={handleChange} name="username" placeholder="Username" ref={usernameRef}/>
-                        <Form.Control.Feedback type="invalid">
-                            Type your username.
-                        </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group controlId="password" className="inputgroup">
                         <Form.Label>Password</Form.Label>
                         <Form.Control required type="password" onChange={handleChange} name="password" placeholder="Password"/>
-                        <Form.Control.Feedback type="invalid">
-                            Type your password.
-                        </Form.Control.Feedback>
+                        {formErrors &&
+                            <p className="formErrorText">Fill all text fields.</p>
+                        }
                     </Form.Group>
                     <button type={"submit"} className="loginBtn">Log in</button>
                     {submitting &&

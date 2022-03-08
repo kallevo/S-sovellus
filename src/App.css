@@ -177,3 +177,11 @@ button {
   margin-left: 3px;
 }
 
+.formErrorText {
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+.loginBtn {
+  margin-top: 10px;
+}
