@@ -109,7 +109,7 @@ app.post('/searchuser', urlencodedParser, (req, res) => {
                     if (comparisonresponse) {
                         const accesstoken = jwt.sign({username: username}, secrets.jwtSecret,
                             {expiresIn: "1h"})
-                        res.status(202).json({accessToken: accesstoken})
+                        res.status(202).json({accessToken: accesstoken, username: username})
                     } else {
                         res.status(203).send("Password incorrect.");
                     }
