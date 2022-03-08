@@ -97,7 +97,7 @@ app.post('/searchuser', urlencodedParser, (req, res) => {
             if (result.length === 0) { //User not found, creating a new user.
                 sql = "INSERT INTO user (username, password) VALUES (?, ?)";
                 result = await query(sql, [username, hashedpassword]);
-                res.status(201).send("New account created.");
+                res.status(201).send("New account created. You can now log in with your account.");
             } else {
                 sql = "SELECT password FROM user WHERE username = ?";
                 result = await query(sql, [username]);
