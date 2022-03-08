@@ -185,7 +185,12 @@ function App() {
 
     return (
         <div className="App">
-        <div className="container">
+            <thead>
+            <tr>
+                <th className="cityheader">Saved cities</th>
+            </tr>
+            </thead>
+            <div className="container">
             <div className="savedCities">
                 <table>
                     <tbody>
@@ -261,7 +266,7 @@ function App() {
                     <Form.Group controlId="username" className="inputgroup">
                         <Form.Label>Username</Form.Label>
                         <Form.Control required type="text" onChange={handleChange} name="username" placeholder="username" ref={usernameRef}/>
-                        <Form.Control.Feedback type="invalid">
+                        <Form.Control.Feedback type="valid">
                             Type your username.
                         </Form.Control.Feedback>
                     </Form.Group>
