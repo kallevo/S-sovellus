@@ -171,6 +171,7 @@ function App() {
 
     return (
         <div className="App">
+        <div className="container">
             <div className="savedCities">
                 <table>
                     <thead>
@@ -201,14 +202,18 @@ function App() {
                         onKeyPress={searchLocation}
                         placeholder='Write a city here...'
                         type="text"/>
+                        
                     {!notLoggedIn &&
                         <div>
-                        Save
+                        <button className="searchButton" onClick={searchLocation}> Check Weather</button><br/>
+                        Save 
                         <input className="pointer" type="checkbox" onClick={handleCheckBoxClick}/>
+                        
                         </div>
                     }
                 </div>
-                <div className="container">
+                
+                
                     <div className="top">
                         <div className="location">
                             <p>{data.name}</p>
@@ -238,7 +243,7 @@ function App() {
                         </div>
                     }
                 </div>
-            </div>
+            
 
             {notLoggedIn &&
             <div className="login">
@@ -264,7 +269,10 @@ function App() {
                     }
                 </Form>
             </div>}
-            {!notLoggedIn && <button onClick={handleLogout} className="loginBtn">Log out</button>}
+            
+                {!notLoggedIn && <div className='login'> <button onClick={handleLogout} className="loginBtn">Log out</button> </div>}
+            
+        </div>
         </div>
     );
 }
