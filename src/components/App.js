@@ -24,6 +24,7 @@ function App() {
     const [notLoggedIn, setNotLoggedIn] = useState(false);
     const formRef = useRef(null);
     const usernameRef = useRef("");
+    const [username, setUsername] = useState("");
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=895284fb2d2c50a520ea537456963d9c`
 
@@ -50,7 +51,7 @@ function App() {
                 }
             });
             if (save && !notLoggedIn) {
-                const info = {username: 'Kalle123', city: location};
+                const info = {username: username, city: location};
                 axios
                     .post("http://localhost:8080/savecity", info)
                     .then(response => {
@@ -94,6 +95,7 @@ function App() {
                     if (res.status === 202) {
                         localStorage.setItem('userToken', JSON.stringify(res.data.accessToken));
                         localStorage.setItem('username', JSON.stringify(res.data.username));
+                        setUsername(res.data.username);
                     } else if (res.status === 203) {
                         alert(res.data);
                     } else if (res.status === 201) {
@@ -105,6 +107,11 @@ function App() {
             setFormValidated(false);
         }
 
+    }
+
+    const handleLogout = () => {
+        localStorage.clear();
+        setNotLoggedIn(true);
     }
 
     const handleRegister = (event) => {
@@ -150,7 +157,7 @@ function App() {
             setNotLoggedIn(true);
             return;
         }
-        const userinfo = {username: 'Kalle123'};
+        const userinfo = {username: username};
         axios
             .post("http://localhost:8080/getusercities", userinfo)
             .then(response => {
@@ -261,7 +268,7 @@ function App() {
                     }
                 </Form>
             </div>}
-            {!notLoggedIn && <button className="loginBtn">Log out</button>}
+            {!notLoggedIn && <button onClick={handleLogout} className="loginBtn">Log out</button>}
         </div>
     );
 }
