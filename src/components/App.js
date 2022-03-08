@@ -3,6 +3,13 @@ import axios from 'axios'
 import {useEffect, useReducer, useRef, useState} from "react";
 import React from "react";
 import {Form} from "react-bootstrap";
+import clearIcon from '../icons/clear.svg';
+import cloudyIcon from '../icons/cloudy.svg';
+import drizzleIcon from '../icons/drizzle.svg';
+import foggyIcon from '../icons/foggy.svg';
+import rainyIcon from '../icons/rainy.svg';
+import snowyIcon from '../icons/snowy.svg';
+import thunderIcon from '../icons/thunder.svg';
 
 const formReducer = (state, event) => {
     return {
@@ -23,6 +30,7 @@ function App() {
     const [submitting, setSubmitting] = useState(false);
     const [notLoggedIn, setNotLoggedIn] = useState(false);
     const formRef = useRef(null);
+    const [weatherStatus, setWeatherStatus] = useState('');
     const usernameRef = useRef("");
     const [username, setUsername] = useState("");
 
@@ -32,6 +40,7 @@ function App() {
         if (validator) {
             axios.get(url).then((response) => {
                 setData(response.data);
+                setWeatherStatus(data.weather[0].main);
                 console.log(response.data);
             });
             setValidator(false);
@@ -114,6 +123,33 @@ function App() {
         localStorage.clear();
         setNotLoggedIn(true);
     }
+    
+    const setIcon = () => {
+       // const weatherState = data.weather[0].main;
+      //  console.log("state on:  " + data.weather[0].main);
+
+
+            switch (data.weather[0].main) {
+              case 'Thunder':
+                return (<img src={thunderIcon} alt="Logo" />)
+              case 'Drizzle':
+                return (<img src={drizzleIcon} alt="Logo" />)
+              case 'Rain':
+                return (<img src={rainyIcon} alt="Logo" />)
+              case 'Snow':
+                return (<img src={snowyIcon} alt="Logo" />)
+              case 'Mist':
+                return (<img src={foggyIcon} alt="Logo" />)
+              case 'Clear':
+                return (<img src={clearIcon} alt="Logo" />)
+              case 'Clouds':
+                return (<img src={cloudyIcon} alt="Logo" />)
+              default:
+                return null
+            }
+        
+    } 
+
 
     function removeCity(save_id) {
         axios
@@ -230,7 +266,10 @@ function App() {
                             {data.main ? <h1>{data.main.temp.toFixed()}°C</h1> : null}
                         </div>
                         <div className="description">
-                            {data.weather ? <p>{data.weather[0].main}</p> : null}
+                            {data.weather ? <p>{data.weather[0].main}<br/>{setIcon()} 
+                            </p> : null}
+                            
+ 
                         </div>
                     </div>
 
