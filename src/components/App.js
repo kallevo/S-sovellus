@@ -140,6 +140,7 @@ function App() {
     const checkIfLoggedIn = () => {
         const token = localStorage.getItem("userToken");
         if (token === null) {
+            setNotLoggedIn(true);
             return false;
         }
         const tokenObj = JSON.parse(token);
@@ -155,18 +156,20 @@ function App() {
             }).catch(error => {
             if (error.response.status === 401) {
                 console.log("Token null at verifying stage.");
+                setNotLoggedIn(true);
                 return false;
             } else if (error.response.status === 403) {
                 alert("Session expired. Log in again.");
+                setNotLoggedIn(true);
                 return false;
         }})
     }
 
     useEffect(() => {
         if (checkIfLoggedIn() === false) {
-            setNotLoggedIn(true);
             return;
         }
+
         const userinfo = {username: JSON.parse(localStorage.getItem("username"))};
         axios
             .post("http://localhost:8080/getusercities", userinfo)
@@ -260,7 +263,7 @@ function App() {
                     <Form.Group controlId="username" className="inputgroup">
                         <Form.Label>Username</Form.Label>
                         <Form.Control required type="text" onChange={handleChange} name="username" placeholder="username" ref={usernameRef}/>
-                        <Form.Control.Feedback type="valid">
+                        <Form.Control.Feedback type="invalid">
                             Type your username.
                         </Form.Control.Feedback>
                     </Form.Group>
