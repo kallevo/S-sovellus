@@ -138,18 +138,33 @@ function App() {
     }
 
     const checkIfLoggedIn = () => {
-        console.log("Checked");
         const token = localStorage.getItem("userToken");
         if (token === null) {
             return false;
         }
         const tokenObj = JSON.parse(token);
         console.log("Token: ", tokenObj);
-        return true;
+        axios
+            .post("http://localhost:8080/verifytoken", {username: JSON.parse(localStorage.getItem("username"))},
+                {headers: {authorization: 'Bearer ' + tokenObj}})
+            .then(res => {
+                if (res.status === 202) {
+                    console.log("Token verification successful.");
+                    return true;
+                }
+            }).catch(error => {
+            if (error.response.status === 401) {
+                console.log("Token null at verifying stage.");
+                return false;
+            } else if (error.response.status === 403) {
+                alert("Session expired. Log in again.");
+                return false;
+        }})
     }
 
     useEffect(() => {
-        if (!checkIfLoggedIn()) {
+        if (checkIfLoggedIn() === false) {
+            console.log("mlfmsalkfnasnfaslnflasflasasnflaf")
             setNotLoggedIn(true);
             return;
         }
