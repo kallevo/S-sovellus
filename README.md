@@ -19,4 +19,4 @@ Kutsun JSON-muoto: `{ save_id: save_id }`.
 
 ## /verifytoken
 Kutsu, jolla tarkistetaan onko käyttäjän token vielä voimassa. Kutsun JSON-muoto: `{ username: username }`.
-Lisäksi tarvitaan authorization header pyyntöön: `{ headers: { authorization: _token_ }}`
+Lisäksi tarvitaan authorization header pyyntöön: `{ headers: { authorization: token }}`
