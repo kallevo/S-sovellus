@@ -10,7 +10,6 @@ body {
   background-color: #303030;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
 }
 
 p {
@@ -26,7 +25,7 @@ h1 {
   position: relative;
   text-align: center;
   padding: 1rem;
-  overflow: hidden;
+  overflow: auto;
 }
 .search{
   text-align: center;
@@ -61,7 +60,7 @@ h1 {
   margin: 1rem auto;
 }
 .App .description {
-  padding-top: 20px;
+  padding-top: 10px;
   position: center;
   right: 180%;
   transform-origin: 0 0;
@@ -72,14 +71,13 @@ h1 {
   text-align: center;
   width: 100%;
   margin: 1rem auto;
-  padding: 1rem;
   border-radius: 12px;
 }
 .feels{
-  padding-bottom: 25px;
+  padding-bottom: 20px;
 }
 .humidity{
-  padding-bottom: 25px;
+  padding-bottom: 20px;
 }
 .bold {
   font-weight: 600;
@@ -156,10 +154,10 @@ button {
   background-color: royalblue;
   cursor: pointer;
   outline: 0;
-  padding: 5px 0;
+  padding: 2px 0;
   font-weight: bold;
   font-size: 16px;
-  width: 80px;
+  width: 60px;
 }
 
 .regBtn {
@@ -189,5 +187,5 @@ img {
 
 .loginBtn {
   margin-top: 10px;
-  width: 150px;
+  width: 140px;
 }
