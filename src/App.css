@@ -157,7 +157,7 @@ button {
   padding: 2px 0;
   font-weight: bold;
   font-size: 16px;
-  width: 60px;
+  width: 80px;
 }
 
 .regBtn {
@@ -186,6 +186,11 @@ img {
 }
 
 .loginBtn {
+  background-color: #c589e0;
+  color: white;
   margin-top: 10px;
   width: 140px;
+}
+.delBtn{
+  background-color: palevioletred;
 }
