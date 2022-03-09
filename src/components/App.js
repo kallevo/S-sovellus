@@ -10,29 +10,18 @@ import foggyIcon from '../icons/foggy.svg';
 import rainyIcon from '../icons/rainy.svg';
 import snowyIcon from '../icons/snowy.svg';
 import thunderIcon from '../icons/thunder.svg';
+import Login from '../components/Login';
 
-const formReducer = (state, event) => {
-    return {
-        ...state,
-        [event.name]: event.value
-    }
-}
 
-function App() {
+function App(props) {
 
-    const [formData, setFormData] = useReducer(formReducer, {})
     const [data, setData] = useState({});
     const [location, setLocation] = useState('');
     const [savedCities, setSavedCities] = useState([0]);
     const [save, setSave] = useState(false);
     const [validator, setValidator] = useState(false);
-    const [formValidated, setFormValidated] = useState(false);
-    const [submitting, setSubmitting] = useState(false);
-    const [notLoggedIn, setNotLoggedIn] = useState(false);
-    const formRef = useRef(null);
     const [weatherStatus, setWeatherStatus] = useState('');
-    const usernameRef = useRef("");
-    const [formErrors, setFormErrors] = useState(false);
+    const [notLoggedIn, setNotLoggedIn] = useState(false);
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=895284fb2d2c50a520ea537456963d9c`
 
@@ -83,46 +72,6 @@ function App() {
             setSave(false);
         }
     }
-
-    const handleLogin = (event) => {
-        const form = event.currentTarget;
-        event.preventDefault();
-        if (form.checkValidity() === false) {
-            event.stopPropagation();
-            setFormValidated(true);
-            setFormErrors(true);
-        } else {
-            setTimeout(() => {
-                setSubmitting(false);
-                formRef.current.reset();
-                usernameRef.current.focus();
-                setNotLoggedIn(false);
-            }, 1000)
-            setSubmitting(true);
-            axios
-                .post("http://localhost:8080/searchuser", formData)
-                .then(res => {
-                    if (res.status === 202) {
-                        localStorage.setItem('userToken', JSON.stringify(res.data.accessToken));
-                        localStorage.setItem('username', JSON.stringify(res.data.username));
-                        console.log(localStorage.getItem('username'));
-                    } else if (res.status === 203) {
-                        alert(res.data);
-                    } else if (res.status === 201) {
-                        alert(res.data);
-                    }
-                }).catch(error => {
-                alert("Error logging in. Try again.");
-            })
-            setFormValidated(false);
-            setFormErrors(false);
-        }
-    }
-
-    const handleLogout = () => {
-        localStorage.clear();
-        setNotLoggedIn(true);
-    }
     
     const setIcon = () => {
        // const weatherState = data.weather[0].main;
@@ -166,17 +115,9 @@ function App() {
         })
     }
 
-    const handleChange = event => {
-        setFormData({
-            name: event.target.name,
-            value: event.target.value,
-        });
-    }
-
     const checkIfLoggedIn = () => {
         const token = localStorage.getItem("userToken");
         if (token === null) {
-            setNotLoggedIn(true);
             return false;
         }
         const tokenObj = JSON.parse(token);
@@ -187,6 +128,7 @@ function App() {
             .then(res => {
                 if (res.status === 202) {
                     console.log("Token verification successful.");
+                    setNotLoggedIn(false);
                     return true;
                 }
             }).catch(error => {
@@ -203,6 +145,7 @@ function App() {
 
     useEffect(() => {
         if (checkIfLoggedIn() === false) {
+            setNotLoggedIn(true);
             return;
         }
 
@@ -293,32 +236,7 @@ function App() {
                         </div>
                     }
                 </div>
-
-
-            {notLoggedIn &&
-            <div className="login">
-                <h3>Login or register</h3>
-                <Form noValidate validated={formValidated} ref={formRef} onSubmit={handleLogin} className="loginForm">
-                    <Form.Group controlId="username" className="inputgroup">
-                        <Form.Label>Username</Form.Label>
-                        <Form.Control required type="text" onChange={handleChange} name="username" placeholder="Username" ref={usernameRef}/>
-                    </Form.Group>
-                    <Form.Group controlId="password" className="inputgroup">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control required type="password" onChange={handleChange} name="password" placeholder="Password"/>
-                        {formErrors &&
-                            <p className="formErrorText">Fill all text fields.</p>
-                        }
-                    </Form.Group>
-                    <button type={"submit"} className="loginBtn">Log in / Register</button>
-                    {submitting &&
-                        <p>Logging in...</p>
-                    }
-                </Form>
-            </div>}
-
-                {!notLoggedIn && <div className='login'> <button onClick={handleLogout} className="loginBtn">Log out</button> </div>}
-
+                <Login/>
         </div>
         </div>
     );
