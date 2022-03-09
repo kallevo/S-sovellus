@@ -297,7 +297,7 @@ function App() {
 
             {notLoggedIn &&
             <div className="login">
-                <h3>Login</h3>
+                <h3>Login or register</h3>
                 <Form noValidate validated={formValidated} ref={formRef} onSubmit={handleLogin} className="loginForm">
                     <Form.Group controlId="username" className="inputgroup">
                         <Form.Label>Username</Form.Label>
@@ -310,7 +310,7 @@ function App() {
                             <p className="formErrorText">Fill all text fields.</p>
                         }
                     </Form.Group>
-                    <button type={"submit"} className="loginBtn">Log in</button>
+                    <button type={"submit"} className="loginBtn">Log in / Register</button>
                     {submitting &&
                         <p>Logging in...</p>
                     }
