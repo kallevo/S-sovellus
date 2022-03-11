@@ -5,7 +5,7 @@
 }
 
 body {
-  font-family: Consolas;
+  font-family: Helvetica;
   color: springgreen;
   background-color: #303030;
   -webkit-font-smoothing: antialiased;
@@ -39,7 +39,7 @@ h1 {
   border-radius: 0px;
   padding-left: 0px;
   padding-bottom: 1px;
-  width: 150px;
+  width: 115px;
   border: 1px solid rgba(255,255,255, 0.8);
 }
 ::placeholder {

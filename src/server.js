@@ -5,7 +5,13 @@ let bodyParser = require('body-parser');
 let bcrypt = require('bcrypt');
 let jwt = require('jsonwebtoken');
 const secrets = require('../src/Secrets.js');
-const url = require('url');
+const cors = require('cors');
+
+const corsOptions = {
+    origin: '*',
+}
+
+app.use(cors(corsOptions))
 
 /**
  * Luodaan yhteys.
@@ -21,13 +27,13 @@ const conn = mysql.createConnection({
 /**
  * Yhdistetaan MySQL:aan.
  */
-conn.connect(function(err) {
+conn.connect(function (err) {
     if (err) throw err;
     console.log("Connected to MySQL!");
 });
 
-let urlencodedParser = bodyParser.urlencoded({ extended: false });
-app.use(bodyParser.urlencoded({ extended: false }));
+let urlencodedParser = bodyParser.urlencoded({extended: false});
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json()); // for reading JSON
 let util = require('util'); // for async calls
 const query = util.promisify(conn.query).bind(conn);
@@ -40,32 +46,40 @@ let server = app.listen(8080, function () {
     console.log("Example app listening at http://%s:%s", host, port)
 })
 
-app.get('/getusercities', function (req, res) {
+app.post('/getusercities', function (req, res) {
     const username = req.body.username;
     console.log("username: ", username);
     const sql1 = "SELECT user_id FROM user WHERE username=?";
-    const sql2 = "SELECT name FROM city WHERE user_id=?";
+    const sql2 = "SELECT * FROM city WHERE user_id=?";
 
-    (async () =>  {
+    (async () => {
         try {
             const result = await query(sql1, [username]);
             const result2 = await query(sql2, [result[0].user_id]);
-            res.send(result2[0]);
+            res.status(201).send(result2);
         } catch (e) {
-            console.log("Database error!"+ e);
+            res.status(401).send("Could not get saved cities. Try again.");
+            console.log("Database error!" + e);
         }
     })()
 })
 
 app.post('/savecity', function (req, res) {
     const city = req.body.city;
-    const userid = req.body.userid;
+    const username = req.body.username;
 
-    const sql = "INSERT INTO city (name, user_id) VALUES (?, ?)";
+    const sql1 = "SELECT user_id FROM user WHERE username=?";
+    const sql2 = "INSERT INTO city (name, user_id) VALUES (?, ?)";
 
     (async () => {
-        await query(sql, [city, userid]);
-        res.send("Saved:" + city + ", " + userid);
+        try {
+            const result = await query(sql1, [username]);
+            await query(sql2, [city, result[0].user_id]);
+            res.status(201).send("City saved successfully: " + city);
+        } catch (e) {
+            res.status(401).send("City save failed. Try again.");
+            console.log("Database error!" + e);
+        }
     })()
 })
 
@@ -83,7 +97,7 @@ app.post('/searchuser', urlencodedParser, (req, res) => {
             if (result.length === 0) { //User not found, creating a new user.
                 sql = "INSERT INTO user (username, password) VALUES (?, ?)";
                 result = await query(sql, [username, hashedpassword]);
-                res.status(201).send("New account created.");
+                res.status(201).send("New account created. You can now log in with your account.");
             } else {
                 sql = "SELECT password FROM user WHERE username = ?";
                 result = await query(sql, [username]);
@@ -95,17 +109,49 @@ app.post('/searchuser', urlencodedParser, (req, res) => {
                     if (comparisonresponse) {
                         const accesstoken = jwt.sign({username: username}, secrets.jwtSecret,
                             {expiresIn: "1h"})
-                        res.status(202).json({accessToken: accesstoken})
+                        res.status(202).json({accessToken: accesstoken, username: username})
                     } else {
                         res.status(203).send("Password incorrect.");
                     }
                 })
             }
         } catch (e) {
-            console.log("Database error!"+ e);
+            console.log("Database error!" + e);
         }
-    })()
-
-
+    })() 
 })
 
+app.post('/remove', function (req, res) {
+    const saveid = req.body.save_id;
+    const sql1 = "DELETE FROM city WHERE save_id=?";
+
+    (async () => {
+        try {
+            console.log("removing saveid:" + saveid)
+            await query(sql1, [saveid]);
+            res.status(201).send("saved city removed");
+        } catch (e) {
+            res.status(401).send("City removal failed. Try again.");
+            console.log("Database error!" + e);
+        }
+    })()
+})
+
+app.post("/verifytoken", function(req, res) {
+    const authHeader = req.header('authorization');
+    const token = authHeader && authHeader.split(' ')[1]
+    console.log("token: ", token)
+    if (token === null) {
+        return res.sendStatus(401);
+    }
+
+    jwt.verify(token, secrets.jwtSecret, (err, user) => {
+        if (err) {
+            return res.status(403).send("Verification of token failed.");
+        } else if (err === null) {
+            return res.status(202).send(req.body);
+        }
+
+        console.log("user (decoded) " + JSON.stringify(user));
+    })
+})
