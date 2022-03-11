@@ -57,8 +57,9 @@ function App() {
     }, [location, validator])
 
     /**
-    Haku tapahtuu painamalla enteria tai hakupainiketta. Jos haettu paikka löytyy avoimesta rajapinnasta, sen tiedot
-    esitetään sovelluksessa. Jos ei löydy, tulee virheilmoitus.
+     * Haku tapahtuu painamalla enteria tai hakupainiketta. Jos haettu paikka löytyy avoimesta rajapinnasta, sen tiedot
+     * esitetään sovelluksessa. Jos ei löydy, tulee virheilmoitus.
+     * Kaupunki voidaan tallentaa klikkaamalla checkboxia.
     */
     const searchLocation = (event) => {
         if (event.key === 'Enter' || event.button === 0) {
@@ -173,7 +174,7 @@ function App() {
 
     }
     /**
-    Kaupunki poistetaan käyttäjän kaupugeista ja tietokannasta.
+    Kaupunki poistetaan käyttäjän tietokannasta.
     */
     function removeCity(save_id) {
         axios
@@ -196,7 +197,9 @@ function App() {
             value: event.target.value,
         });
     }
-
+    /**
+     * Tarkistetaan onko token luotu.
+     * */
     const checkIfLoggedIn = () => {
         const token = localStorage.getItem("userToken");
         if (token === null) {
