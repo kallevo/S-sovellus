@@ -145,7 +145,7 @@ function App() {
         localStorage.clear();
         setNotLoggedIn(true);
     }
-    /*
+    /**
     Säätietoihin asetetaan ikoni sen mukaan millainen sää etsityssä kohteessa on.
     */
     const setIcon = () => {
@@ -172,7 +172,7 @@ function App() {
             }
 
     }
-    /*
+    /**
     Kaupunki poistetaan käyttäjän kaupugeista ja tietokannasta.
     */
     function removeCity(save_id) {
@@ -229,7 +229,7 @@ function App() {
         if (checkIfLoggedIn() === false) {
             return;
         }
-        /*
+        /**
         Kun käyttäjä kirjautuu sisään, sovelluksen näkymään tuodaan hänen omat tietonsa, tässä tapauksessa tallennetut
         kaupungit.
         */
