@@ -10,19 +10,38 @@ import foggyIcon from '../icons/foggy.svg';
 import rainyIcon from '../icons/rainy.svg';
 import snowyIcon from '../icons/snowy.svg';
 import thunderIcon from '../icons/thunder.svg';
-import Login from '../components/Login';
 
+const formReducer = (state, event) => {
+    return {
+        ...state,
+        [event.name]: event.value
+    }
+}
 
-function App(props) {
+/**
+    Lähes kaikki sovelluksen toiminta tapahtuu tässä komponentissa:
+    Datan hakeminen avoimesta rajapinnasta sanahaulla ja säätietojen tarkastelu.
+*/
 
+function App() {
+
+    const [formData, setFormData] = useReducer(formReducer, {})
     const [data, setData] = useState({});
     const [location, setLocation] = useState('');
     const [savedCities, setSavedCities] = useState([0]);
     const [save, setSave] = useState(false);
     const [validator, setValidator] = useState(false);
-    const [weatherStatus, setWeatherStatus] = useState('');
+    const [formValidated, setFormValidated] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const [notLoggedIn, setNotLoggedIn] = useState(false);
+    const formRef = useRef(null);
+    const [weatherStatus, setWeatherStatus] = useState('');
+    const usernameRef = useRef("");
+    const [formErrors, setFormErrors] = useState(false);
 
+    /**
+    Säädata käydään hakemassa avoimesta rajapinnasta ja se määritellään käyttämään metrijärjestelmää.
+    */
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=895284fb2d2c50a520ea537456963d9c`
 
     useEffect(() => {
@@ -37,6 +56,10 @@ function App(props) {
         console.log("updated: ", location);
     }, [location, validator])
 
+    /**
+    Haku tapahtuu painamalla enteria tai hakupainiketta. Jos haettu paikka löytyy avoimesta rajapinnasta, sen tiedot
+    esitetään sovelluksessa. Jos ei löydy, tulee virheilmoitus.
+    */
     const searchLocation = (event) => {
         if (event.key === 'Enter' || event.button === 0) {
             axios.get(url)
@@ -64,7 +87,9 @@ function App(props) {
             }
         }
     };
-
+    /**
+     * Kaupungin voi tallentaa omaan kokoelmaansa merkkaamalla checkboxin.
+     * */
     const handleCheckBoxClick = (event) => {
         if (event.target.checked) {
             setSave(true);
@@ -72,11 +97,60 @@ function App(props) {
             setSave(false);
         }
     }
-    
+    /**
+    Sovellukseen voidaan rekisteröityä ja kirjautua. Kirjautuneena paikkoja voidaan tallentaa tietokantaan.
+
+    Kirjautuminen toimii myös rekisteröitymisenä: Jos käyttäjällä ei ole vielä tiliä, sellainen luodaan ja siihen
+    sisältyy käyttäjänimi ja salasana.
+
+    */
+    const handleLogin = (event) => {
+        const form = event.currentTarget;
+        event.preventDefault();
+        if (form.checkValidity() === false) {
+            event.stopPropagation();
+            setFormValidated(true);
+            setFormErrors(true);
+        } else {
+            setTimeout(() => {
+                setSubmitting(false);
+                formRef.current.reset();
+                usernameRef.current.focus();
+                setNotLoggedIn(false);
+            }, 1000)
+            setSubmitting(true);
+            axios
+                .post("http://localhost:8080/searchuser", formData)
+                .then(res => {
+                    if (res.status === 202) {
+                        localStorage.setItem('userToken', JSON.stringify(res.data.accessToken));
+                        localStorage.setItem('username', JSON.stringify(res.data.username));
+                        console.log(localStorage.getItem('username'));
+                    } else if (res.status === 203) {
+                        alert(res.data);
+                    } else if (res.status === 201) {
+                        alert(res.data);
+                    }
+                }).catch(error => {
+                alert("Error logging in. Try again.");
+            })
+            setFormValidated(false);
+            setFormErrors(false);
+        }
+    }
+    /**
+     * Kirjaudutaan ulos
+     */
+    const handleLogout = () => {
+        localStorage.clear();
+        setNotLoggedIn(true);
+    }
+    /*
+    Säätietoihin asetetaan ikoni sen mukaan millainen sää etsityssä kohteessa on.
+    */
     const setIcon = () => {
        // const weatherState = data.weather[0].main;
       //  console.log("state on:  " + data.weather[0].main);
-
 
             switch (data.weather[0].main) {
               case 'Thunder':
@@ -96,10 +170,11 @@ function App(props) {
               default:
                 return null
             }
-        
-    } 
 
-
+    }
+    /*
+    Kaupunki poistetaan käyttäjän kaupugeista ja tietokannasta.
+    */
     function removeCity(save_id) {
         axios
             .post("http://localhost:8080/remove", {save_id})
@@ -115,9 +190,17 @@ function App(props) {
         })
     }
 
+    const handleChange = event => {
+        setFormData({
+            name: event.target.name,
+            value: event.target.value,
+        });
+    }
+
     const checkIfLoggedIn = () => {
         const token = localStorage.getItem("userToken");
         if (token === null) {
+            setNotLoggedIn(true);
             return false;
         }
         const tokenObj = JSON.parse(token);
@@ -128,7 +211,6 @@ function App(props) {
             .then(res => {
                 if (res.status === 202) {
                     console.log("Token verification successful.");
-                    setNotLoggedIn(false);
                     return true;
                 }
             }).catch(error => {
@@ -145,10 +227,12 @@ function App(props) {
 
     useEffect(() => {
         if (checkIfLoggedIn() === false) {
-            setNotLoggedIn(true);
             return;
         }
-
+        /*
+        Kun käyttäjä kirjautuu sisään, sovelluksen näkymään tuodaan hänen omat tietonsa, tässä tapauksessa tallennetut
+        kaupungit.
+        */
         const userinfo = {username: JSON.parse(localStorage.getItem("username"))};
         axios
             .post("http://localhost:8080/getusercities", userinfo)
@@ -212,10 +296,10 @@ function App(props) {
                             {data.main ? <h1>{data.main.temp.toFixed()}°C</h1> : null}
                         </div>
                         <div className="description">
-                            {data.weather ? <p>{data.weather[0].main}<br/>{setIcon()} 
+                            {data.weather ? <p>{data.weather[0].main}<br/>{setIcon()}
                             </p> : null}
-                            
- 
+
+
                         </div>
                     </div>
 
@@ -236,7 +320,32 @@ function App(props) {
                         </div>
                     }
                 </div>
-                <Login/>
+
+
+            {notLoggedIn &&
+            <div className="login">
+                <h3>Login or register</h3>
+                <Form noValidate validated={formValidated} ref={formRef} onSubmit={handleLogin} className="loginForm">
+                    <Form.Group controlId="username" className="inputgroup">
+                        <Form.Label>Username</Form.Label>
+                        <Form.Control required type="text" onChange={handleChange} name="username" placeholder="Username" ref={usernameRef}/>
+                    </Form.Group>
+                    <Form.Group controlId="password" className="inputgroup">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control required type="password" onChange={handleChange} name="password" placeholder="Password"/>
+                        {formErrors &&
+                            <p className="formErrorText">Fill all text fields.</p>
+                        }
+                    </Form.Group>
+                    <button type={"submit"} className="loginBtn">Log in / Register</button>
+                    {submitting &&
+                        <p>Logging in...</p>
+                    }
+                </Form>
+            </div>}
+
+                {!notLoggedIn && <div className='login'> <button onClick={handleLogout} className="loginBtn">Log out</button> </div>}
+
         </div>
         </div>
     );
