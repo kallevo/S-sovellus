@@ -1,7 +1,7 @@
 # Rest-apin kutsut ja niitä vastaavat JSON-muodot
 
 ## /getusercities
-Kutsu käyttäjän tallennettujen kaupunkien hakemiseen tietokannasta. 
+Kutsu käyttäjän tallennettujen kaupunkien hakemiseen tietokannasta.
 Kutsun JSON-muoto: `{ username: username }`.
 
 ## /savecity
