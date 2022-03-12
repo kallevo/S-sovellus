@@ -18,6 +18,11 @@ const formReducer = (state, event) => {
     }
 }
 
+/**
+    Lähes kaikki sovelluksen toiminta tapahtuu tässä komponentissa:
+    Datan hakeminen avoimesta rajapinnasta sanahaulla ja säätietojen tarkastelu.
+*/
+
 function App() {
 
     const [formData, setFormData] = useReducer(formReducer, {})
@@ -34,6 +39,9 @@ function App() {
     const usernameRef = useRef("");
     const [formErrors, setFormErrors] = useState(false);
 
+    /**
+    Säädata käydään hakemassa avoimesta rajapinnasta ja se määritellään käyttämään metrijärjestelmää.
+    */
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=895284fb2d2c50a520ea537456963d9c`
 
     useEffect(() => {
@@ -48,6 +56,10 @@ function App() {
         console.log("updated: ", location);
     }, [location, validator])
 
+    /**
+    Haku tapahtuu painamalla enteria tai hakupainiketta. Jos haettu paikka löytyy avoimesta rajapinnasta, sen tiedot
+    esitetään sovelluksessa. Jos ei löydy, tulee virheilmoitus.
+    */
     const searchLocation = (event) => {
         if (event.key === 'Enter' || event.button === 0) {
             axios.get(url)
@@ -75,7 +87,9 @@ function App() {
             }
         }
     };
-
+    /**
+     * Kaupungin voi tallentaa omaan kokoelmaansa merkkaamalla checkboxin.
+     * */
     const handleCheckBoxClick = (event) => {
         if (event.target.checked) {
             setSave(true);
@@ -83,7 +97,13 @@ function App() {
             setSave(false);
         }
     }
+    /**
+    Sovellukseen voidaan rekisteröityä ja kirjautua. Kirjautuneena paikkoja voidaan tallentaa tietokantaan.
 
+    Kirjautuminen toimii myös rekisteröitymisenä: Jos käyttäjällä ei ole vielä tiliä, sellainen luodaan ja siihen
+    sisältyy käyttäjänimi ja salasana.
+
+    */
     const handleLogin = (event) => {
         const form = event.currentTarget;
         event.preventDefault();
@@ -118,16 +138,19 @@ function App() {
             setFormErrors(false);
         }
     }
-
+    /**
+     * Kirjaudutaan ulos
+     */
     const handleLogout = () => {
         localStorage.clear();
         setNotLoggedIn(true);
     }
-    
+    /*
+    Säätietoihin asetetaan ikoni sen mukaan millainen sää etsityssä kohteessa on.
+    */
     const setIcon = () => {
        // const weatherState = data.weather[0].main;
       //  console.log("state on:  " + data.weather[0].main);
-
 
             switch (data.weather[0].main) {
               case 'Thunder':
@@ -147,10 +170,11 @@ function App() {
               default:
                 return null
             }
-        
-    } 
 
-
+    }
+    /*
+    Kaupunki poistetaan käyttäjän kaupugeista ja tietokannasta.
+    */
     function removeCity(save_id) {
         axios
             .post("http://localhost:8080/remove", {save_id})
@@ -205,7 +229,10 @@ function App() {
         if (checkIfLoggedIn() === false) {
             return;
         }
-
+        /*
+        Kun käyttäjä kirjautuu sisään, sovelluksen näkymään tuodaan hänen omat tietonsa, tässä tapauksessa tallennetut
+        kaupungit.
+        */
         const userinfo = {username: JSON.parse(localStorage.getItem("username"))};
         axios
             .post("http://localhost:8080/getusercities", userinfo)
@@ -269,10 +296,10 @@ function App() {
                             {data.main ? <h1>{data.main.temp.toFixed()}°C</h1> : null}
                         </div>
                         <div className="description">
-                            {data.weather ? <p>{data.weather[0].main}<br/>{setIcon()} 
+                            {data.weather ? <p>{data.weather[0].main}<br/>{setIcon()}
                             </p> : null}
-                            
- 
+
+
                         </div>
                     </div>
 
