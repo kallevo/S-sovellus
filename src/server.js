@@ -130,6 +130,9 @@ app.post('/searchuser', urlencodedParser, (req, res) => {
     })()
 })
 
+/**
+ * Tallennetun kaupungin poistamiseen.
+ */
 app.post('/remove', function (req, res) {
     const saveid = req.body.save_id;
     const sql1 = "DELETE FROM city WHERE save_id=?";

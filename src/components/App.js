@@ -190,6 +190,9 @@ function App() {
         })
     }
 
+    /*
+    Muuttaa FormDatan arvoja aina kun kirjautumiskentän arvot muuttuvat.
+     */
     const handleChange = event => {
         setFormData({
             name: event.target.name,
@@ -197,6 +200,9 @@ function App() {
         });
     }
 
+    /*
+    Katsoo, onko käyttäjä kirjautunut sisään.
+     */
     const checkIfLoggedIn = () => {
         const token = localStorage.getItem("userToken");
         if (token === null) {
