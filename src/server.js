@@ -46,6 +46,11 @@ let server = app.listen(8080, function () {
     console.log("Example app listening at http://%s:%s", host, port)
 })
 
+/**
+ * Käy hakemassa käyttäjien tallennetut kaupungit tunnuksien(id) mukaan.
+ *
+ * */
+
 app.post('/getusercities', function (req, res) {
     const username = req.body.username;
     console.log("username: ", username);
@@ -63,7 +68,9 @@ app.post('/getusercities', function (req, res) {
         }
     })()
 })
-
+/**
+ * Tallentaa kaupungin tietokantaan.
+ * */
 app.post('/savecity', function (req, res) {
     const city = req.body.city;
     const username = req.body.username;
@@ -82,7 +89,9 @@ app.post('/savecity', function (req, res) {
         }
     })()
 })
-
+/**
+ * Etsitään käyttäjää tietokannasta. Jos käyttäjätiliä ei löydy, se luodaan.
+ * */
 app.post('/searchuser', urlencodedParser, (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -118,7 +127,7 @@ app.post('/searchuser', urlencodedParser, (req, res) => {
         } catch (e) {
             console.log("Database error!" + e);
         }
-    })() 
+    })()
 })
 
 app.post('/remove', function (req, res) {
@@ -136,6 +145,12 @@ app.post('/remove', function (req, res) {
         }
     })()
 })
+
+/**
+ * Varmistetaan token.
+ *
+ *
+ * */
 
 app.post("/verifytoken", function(req, res) {
     const authHeader = req.header('authorization');
